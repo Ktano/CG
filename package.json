@@ -1,0 +1,22 @@
+{
+  "name": "projecto",
+  "version": "1.0.0",
+  "description": "\"# CG\"",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ktano/CG.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ktano/CG/issues"
+  },
+  "homepage": "https://github.com/Ktano/CG#readme",
+  "devDependencies": {
+    "eslint-config-google": "^0.9.1"
+  }
+}
