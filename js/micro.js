@@ -41,24 +41,20 @@ function createScene() {
     scene.add(new THREE.AxisHelper(10));
 
     createCourse(0, 0, 0);
-    /*
-        createOrangeObstacle(50, 95);
-        createOrangeObstacle(-375, 45);
-        createOrangeObstacle(700, -325);
-    */
+
     createButterObstacle(-375, -150);
     createButterObstacle(25, 30);
     createButterObstacle(350, 55);
     createButterObstacle(450, 230);
     createButterObstacle(500, -300);
-    createDirectionalLight(450, 300, -250);
+    createDirectionalLight(750, 400, -150);
     createCandles();
     createCar(400, 0, 350);
 
 }
 
 function createDirectionalLight(x, y, z) {
-    light = new THREE.DirectionalLight(0xFFFEFA, 1.5);
+    light = new THREE.DirectionalLight(0xFFFEFA, 1.8);
 
     light.position.x = x;
     light.position.y = y;
@@ -164,8 +160,10 @@ function addCaule(obj, x, y, z) {
                 wireframe: false
             }),
             new THREE.MeshPhongMaterial({
-                color: 0x00FF00,
-                wireframe: false
+                color: 0x668000,
+                wireframe: false,
+                specular: 0x00B300,
+                shininess: 10
             })
         ]
     }
@@ -370,7 +368,8 @@ function addTable(obj, x, y, z) {
             }),
             new THREE.MeshPhongMaterial({
                 color: 0xF0EAD6,
-                wireframe: false
+                wireframe: false,
+                shininess:5
             })
         ]
     };
@@ -405,7 +404,9 @@ function addCheerio(obj, x, y, z) {
             wireframe: false
         }), new THREE.MeshPhongMaterial({
             color: color,
-            wireframe: false
+            wireframe: false,
+            specular:0x000,
+            shininess:0
         })]
     }
     mesh.material = mesh.userData.materials[materialindex];
@@ -435,7 +436,9 @@ function addButter(obj, x, y, z) {
             }),
             new THREE.MeshPhongMaterial({
                 color: 0xF3EF7D,
-                wireframe: false
+                wireframe: false,
+                specular: 0xFFFF3D,
+                shininess:32
             })
         ]
     }
@@ -459,7 +462,9 @@ function addOrange(obj, x, y, z) {
             }),
             new THREE.MeshPhongMaterial({
                 color: 0xFF8C00,
-                wireframe: false
+                wireframe: false,
+                specular: 0x005E00,
+                shininess:30
             })
         ]
     };
@@ -750,6 +755,13 @@ function animate() {
                 });
             }
         });
+
+        scene.traverse(function (node) {
+            if (node.isPointLight){
+                node.visible=!disablecandels;
+            }
+        });
+
 
         updatelights = false;
     }
