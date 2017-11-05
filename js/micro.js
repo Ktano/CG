@@ -14,9 +14,9 @@ var oranges = [];
 var light;
 var updatelights = true;
 var disablelight = false;
-var materialindex = 0;
+var materialindex = 1;
 var day = true;
-var disablecandels=false;
+var disablecandels = false;
 /* Constants*/
 HEIGHT = 900;
 WIDTH = 1500;
@@ -51,18 +51,36 @@ function createScene() {
     createButterObstacle(350, 55);
     createButterObstacle(450, 230);
     createButterObstacle(500, -300);
-    createDirectionalLight(450, 300, 0);
+    createDirectionalLight(450, 300, -250);
+    createCandles();
     createCar(400, 0, 350);
 
 }
 
 function createDirectionalLight(x, y, z) {
-    light = new THREE.DirectionalLight();
+    light = new THREE.DirectionalLight(0xFFFEFA, 1.5);
 
     light.position.x = x;
     light.position.y = y;
     light.position.z = z;
     scene.add(light);
+}
+
+function createCandleLight(x, y, z) {
+    var candle = new THREE.PointLight(0xFF8100, 1, 1500, 2)
+    candle.position.x = x;
+    candle.position.y = y;
+    candle.position.z = z;
+    scene.add(candle);
+}
+
+function createCandles() {
+
+    for (var i = 0; i < 2; i++) {
+        for (var j = 0; j < 3; j++) {
+            createCandleLight(-500 + 500 * j, 70, -350 + 700 * i);
+        }
+    }
 }
 
 function createCamera() {
@@ -151,7 +169,7 @@ function addCaule(obj, x, y, z) {
             })
         ]
     }
-    mesh.material = mesh.userData.materials[0];
+    mesh.material = mesh.userData.materials[materialindex];
     mesh.position.set(x, y, z);
 
     obj.add(mesh);
@@ -338,7 +356,7 @@ function createCourse(x, y, z) {
 function addTable(obj, x, y, z) {
     "use strict";
 
-    var geometry = new THREE.CubeGeometry(WIDTH, 2, HEIGHT);
+    var geometry = new THREE.CubeGeometry(WIDTH, 2, HEIGHT, 100, 100, 100);
     var mesh = new THREE.Mesh(geometry);
 
     mesh.userData = {
@@ -356,7 +374,7 @@ function addTable(obj, x, y, z) {
             })
         ]
     };
-    mesh.material = mesh.userData.materials[0];
+    mesh.material = mesh.userData.materials[materialindex];
     mesh.position.set(x, y, z);
 
 
@@ -385,12 +403,12 @@ function addCheerio(obj, x, y, z) {
         }), new THREE.MeshLambertMaterial({
             color: color,
             wireframe: false
-        }), , new THREE.MeshPhongMaterial({
+        }), new THREE.MeshPhongMaterial({
             color: color,
             wireframe: false
         })]
     }
-    mesh.material = mesh.userData.materials[0];
+    mesh.material = mesh.userData.materials[materialindex];
     mesh.position.set(x, y, z);
 
     mesh.rotation.x = Math.PI / 2;
@@ -401,7 +419,7 @@ function addCheerio(obj, x, y, z) {
 
 function addButter(obj, x, y, z) {
 
-    var geometry = new THREE.CubeGeometry(100, 40, 50)
+    var geometry = new THREE.CubeGeometry(100, 40, 50, 10, 10, 10)
 
     var mesh = new THREE.Mesh(geometry);
     mesh.position.set(x, y, z);
@@ -421,7 +439,7 @@ function addButter(obj, x, y, z) {
             })
         ]
     }
-    mesh.material = mesh.userData.materials[0];
+    mesh.material = mesh.userData.materials[materialindex];
     mesh.rotation.y = Math.random() * Math.PI * 2 - Math.PI;
     obj.add(mesh);
 }
@@ -446,14 +464,14 @@ function addOrange(obj, x, y, z) {
         ]
     };
 
-    mesh.material = mesh.userData.materials[0];
+    mesh.material = mesh.userData.materials[materialindex];
     mesh.position.set(x, y, z);
 
     obj.add(mesh);
 }
 
 function intercept(current, other) {
-    return interceptSphere(current, other) && interceptBox(current, other)
+    return (interceptSphere(current, other) && interceptBox(current, other));
 }
 
 function interceptSphere(current, other) {
@@ -463,7 +481,7 @@ function interceptSphere(current, other) {
 
 function interceptBox(current, other) {
     var box1 = current.boundingBox;
-    var box2 = current.boundingBox;
+    var box2 = other.boundingBox;
     return box1.max.x > box2.min.x &&
         box1.min.x < box2.max.x &&
         box1.max.z > box2.min.z &&
@@ -512,22 +530,7 @@ function onKeyDown(e) {
             car.userData.moving = true
             car.userData.accelarating = -1;
             break;
-        case 78: // N key
-            day = !day;
-            updatelights=true;
-            break;
-        case 76: // L key
-            disablelight = !disablelight;
-            updatelights=true;
-            break;
-        case 71: //g key
-            materialindex = (materialindex + 1) % 2;
-            updatelights=true;
-            break;
-        case 67: //c key
-        disablecandels = !disablecandels;
-        updatelights=true;
-        break;
+
 
     }
 }
@@ -561,6 +564,22 @@ function onKeyUp(e) {
         case 51:
             currentCamera = 2;
             updateCamera = true;
+            break;
+        case 78: // N key
+            day = !day;
+            updatelights = true;
+            break;
+        case 76: // L key
+            disablelight = !disablelight;
+            updatelights = true;
+            break;
+        case 71: //g key
+            materialindex = materialindex == 1 ? 2 : 1;
+            updatelights = true;
+            break;
+        case 67: //c key
+            disablecandels = !disablecandels;
+            updatelights = true;
             break;
     }
 }
@@ -719,9 +738,9 @@ function animate() {
     });
 
     /*updatelights*/
-    if (updatelights = true) {
+    if (updatelights) {
         light.visible = day;
-        var index = disablelight ? 0 : materialindex + 1;
+        var index = disablelight ? 0 : materialindex;
 
         scene.traverse(function (node) {
             if (node.userData.materials && node.userData.type != "car") {
