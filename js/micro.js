@@ -11,6 +11,12 @@ var orangeClock = new THREE.Clock(true);
 var currentMultiplier = 1;
 var oranges = [];
 
+var light;
+var updatelights = true;
+var disablelight = false;
+var materialindex = 0;
+var day = true;
+var disablecandels=false;
 /* Constants*/
 HEIGHT = 900;
 WIDTH = 1500;
@@ -45,9 +51,18 @@ function createScene() {
     createButterObstacle(350, 55);
     createButterObstacle(450, 230);
     createButterObstacle(500, -300);
-
+    createDirectionalLight(450, 300, 0);
     createCar(400, 0, 350);
 
+}
+
+function createDirectionalLight(x, y, z) {
+    light = new THREE.DirectionalLight();
+
+    light.position.x = x;
+    light.position.y = y;
+    light.position.z = z;
+    scene.add(light);
 }
 
 function createCamera() {
@@ -119,12 +134,24 @@ function createOrangeObstacle(x, z, dir, sp) {
 }
 
 function addCaule(obj, x, y, z) {
-    var geometry = new THREE.CylinderGeometry(2, 2, 5, 32)
-    var material = new THREE.MeshBasicMaterial({
-        color: 0x00FF00,
-        wireframe: false
-    });
-    var mesh = new THREE.Mesh(geometry, material);
+    var geometry = new THREE.CylinderGeometry(2, 2, 5, 32);
+    var mesh = new THREE.Mesh(geometry);
+    mesh.userData = {
+        materials: [new THREE.MeshBasicMaterial({
+                color: 0x00FF00,
+                wireframe: false
+            }),
+            new THREE.MeshLambertMaterial({
+                color: 0x00FF00,
+                wireframe: false
+            }),
+            new THREE.MeshPhongMaterial({
+                color: 0x00FF00,
+                wireframe: false
+            })
+        ]
+    }
+    mesh.material = mesh.userData.materials[0];
     mesh.position.set(x, y, z);
 
     obj.add(mesh);
@@ -292,12 +319,8 @@ function createCourse(x, y, z) {
 
     var table = new THREE.Object3D();
 
-    var material = new THREE.MeshBasicMaterial({
-        color: 0xF0EAD6,
-        wireframe: false
-    });
 
-    addTable(table, 0, 0, 0, material);
+    addTable(table, 0, 0, 0);
 
     var course = course1();
     var arraylen = course.length;
@@ -312,12 +335,30 @@ function createCourse(x, y, z) {
     table.position.z = z;
 }
 
-function addTable(obj, x, y, z, material) {
+function addTable(obj, x, y, z) {
     "use strict";
 
     var geometry = new THREE.CubeGeometry(WIDTH, 2, HEIGHT);
-    var mesh = new THREE.Mesh(geometry, material);
+    var mesh = new THREE.Mesh(geometry);
+
+    mesh.userData = {
+        materials: [new THREE.MeshBasicMaterial({
+                color: 0xF0EAD6,
+                wireframe: false
+            }),
+            new THREE.MeshLambertMaterial({
+                color: 0xF0EAD6,
+                wireframe: false
+            }),
+            new THREE.MeshPhongMaterial({
+                color: 0xF0EAD6,
+                wireframe: false
+            })
+        ]
+    };
+    mesh.material = mesh.userData.materials[0];
     mesh.position.set(x, y, z);
+
 
     obj.add(mesh);
 
@@ -326,16 +367,30 @@ function addTable(obj, x, y, z, material) {
 function addCheerio(obj, x, y, z) {
     var cheerio = new colidable();
     var geometry = new THREE.TorusGeometry(5, 2, 16, 100);
-    var material = new THREE.MeshBasicMaterial({
-        color: randomColor(),
-        wireframe: false
-    });
+    var color = randomColor();
+
     cheerio.userData = {
         type: "cheerio",
         direction: new THREE.Vector3(0, 0, 0),
         speed: 0,
+        color: color,
+
     }
-    var mesh = new THREE.Mesh(geometry, material);
+
+    var mesh = new THREE.Mesh(geometry);
+    mesh.userData = {
+        materials: [new THREE.MeshBasicMaterial({
+            color: color,
+            wireframe: false
+        }), new THREE.MeshLambertMaterial({
+            color: color,
+            wireframe: false
+        }), , new THREE.MeshPhongMaterial({
+            color: color,
+            wireframe: false
+        })]
+    }
+    mesh.material = mesh.userData.materials[0];
     mesh.position.set(x, y, z);
 
     mesh.rotation.x = Math.PI / 2;
@@ -347,24 +402,51 @@ function addCheerio(obj, x, y, z) {
 function addButter(obj, x, y, z) {
 
     var geometry = new THREE.CubeGeometry(100, 40, 50)
-    var material = new THREE.MeshBasicMaterial({
-        color: 0xF3EF7D,
-        wireframe: false
-    });
-    var mesh = new THREE.Mesh(geometry, material);
-    mesh.position.set(x, y, z);
 
+    var mesh = new THREE.Mesh(geometry);
+    mesh.position.set(x, y, z);
+    mesh.userData = {
+        materials: [
+            new THREE.MeshBasicMaterial({
+                color: 0xF3EF7D,
+                wireframe: false
+            }),
+            new THREE.MeshLambertMaterial({
+                color: 0xF3EF7D,
+                wireframe: false
+            }),
+            new THREE.MeshPhongMaterial({
+                color: 0xF3EF7D,
+                wireframe: false
+            })
+        ]
+    }
+    mesh.material = mesh.userData.materials[0];
     mesh.rotation.y = Math.random() * Math.PI * 2 - Math.PI;
     obj.add(mesh);
 }
 
 function addOrange(obj, x, y, z) {
     var geometry = new THREE.SphereGeometry(20, 15, 15)
-    var material = new THREE.MeshBasicMaterial({
-        color: 0xFF8C00,
-        wireframe: false
-    });
-    var mesh = new THREE.Mesh(geometry, material);
+
+    var mesh = new THREE.Mesh(geometry);
+    mesh.userData = {
+        materials: [new THREE.MeshBasicMaterial({
+                color: 0xFF8C00,
+                wireframe: false
+            }),
+            new THREE.MeshLambertMaterial({
+                color: 0xFF8C00,
+                wireframe: false
+            }),
+            new THREE.MeshPhongMaterial({
+                color: 0xFF8C00,
+                wireframe: false
+            })
+        ]
+    };
+
+    mesh.material = mesh.userData.materials[0];
     mesh.position.set(x, y, z);
 
     obj.add(mesh);
@@ -430,6 +512,23 @@ function onKeyDown(e) {
             car.userData.moving = true
             car.userData.accelarating = -1;
             break;
+        case 78: // N key
+            day = !day;
+            updatelights=true;
+            break;
+        case 76: // L key
+            disablelight = !disablelight;
+            updatelights=true;
+            break;
+        case 71: //g key
+            materialindex = (materialindex + 1) % 2;
+            updatelights=true;
+            break;
+        case 67: //c key
+        disablecandels = !disablecandels;
+        updatelights=true;
+        break;
+
     }
 }
 
@@ -513,17 +612,17 @@ function animate() {
 
     /*update cheerioes*/
     scene.traverse(function (node) {
-        if (node.userData.type=="cheerio" && node.userData.speed!=0) {
+        if (node.userData.type == "cheerio" && node.userData.speed != 0) {
 
             if (node.userData.speed < 0) {
                 node.userData.speed += DEC;
                 if (node.userData.speed > 0)
-                node.userData.speed = 0;
+                    node.userData.speed = 0;
             }
             if (node.userData.speed > 0) {
                 node.userData.speed -= DEC;
                 if (node.userData.speed < 0)
-                node.userData.speed = 0;
+                    node.userData.speed = 0;
             }
             var d = new THREE.Vector3;
             d.copy(node.userData.direction);
@@ -619,6 +718,23 @@ function animate() {
         }
     });
 
+    /*updatelights*/
+    if (updatelights = true) {
+        light.visible = day;
+        var index = disablelight ? 0 : materialindex + 1;
+
+        scene.traverse(function (node) {
+            if (node.userData.materials && node.userData.type != "car") {
+                node.traverse(function (node) {
+                    if (node instanceof THREE.Mesh)
+                        node.material = node.userData.materials[index];
+                });
+            }
+        });
+
+        updatelights = false;
+    }
+
     render();
     requestAnimationFrame(animate);
 }
@@ -641,17 +757,17 @@ function handleColision(main, other) {
     switch (main.userData.type) {
         case "cheerio":
             if (other.userData.type == "car" || other.userData.type == "cheerio") {
-                main.userData.speed = Math.max(other.userData.speed,main.userData.speed);
+                main.userData.speed = Math.max(other.userData.speed, main.userData.speed);
 
                 main.userData.direction.add(other.userData.direction).normalize();
                 var dist = main.boundingSphere.center.distanceTo(other.boundingSphere.center);
-                var direc = new THREE.Vector3(main.position.x-other.position.x, 0,  main.position.z-other.position.z).normalize()
-                main.position.add(direc.multiplyScalar(main.boundingSphere.radius + other.boundingSphere.radius - dist+1));
+                var direc = new THREE.Vector3(main.position.x - other.position.x, 0, main.position.z - other.position.z).normalize()
+                main.position.add(direc.multiplyScalar(main.boundingSphere.radius + other.boundingSphere.radius - dist + 1));
                 main.updateboundings();
             }
             break;
         case "butter":
-            if (other.userData.type == "car"|| other.userData.type == "cheerio") {
+            if (other.userData.type == "car" || other.userData.type == "cheerio") {
                 other.userData.speed = 0;
                 var dist = main.boundingSphere.center.distanceTo(other.boundingSphere.center);
                 var direc = new THREE.Vector3(other.position.x - main.position.x, 0, other.position.z - main.position.z).normalize()
