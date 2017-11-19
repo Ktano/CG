@@ -17,6 +17,9 @@ var disablelight = false;
 var materialindex = 1;
 var day = true;
 var disablecandels = false;
+var disableheadlights = false;
+var paused = false;
+
 /* Constants*/
 HEIGHT = 900;
 WIDTH = 1500;
@@ -218,12 +221,23 @@ function createCar(x, y, z) {
     addFrontWheelConnections(car, -8.75, 1.5, 3);
     addFrontWheelConnections(car, -8.75, 1.5, -3);
     addCamera(car, 50, 25);
+    addHeadLight(car, -12.5, 3, 3);
+    addHeadLight(car, -12.5, 3, -3);
     scene.add(car);
     car.position.copy(car.userData.startposition);
 
     car.updateboundings();
 }
 
+function addHeadLight(obj, x, y, z) {
+    var light = new THREE.SpotLight(0xFFF6EC, 2, 100);
+    light.position.x = x;
+    light.position.y = y;
+    light.position.z = z;
+    light.target.position.copy(light.position);
+    light.target.position.add(new THREE.Vector3(-3, -1, 0));
+    obj.add(light, light.target);
+}
 
 function addCamera(obj, x, y) {
     "use strict";
@@ -563,12 +577,12 @@ function createCourse(x, y, z) {
 function addTable(obj, x, y, z) {
     "use strict";
 
-    var geometry = new THREE.CubeGeometry(WIDTH, 2, HEIGHT, 100, 100, 100);
+    var geometry = new THREE.CubeGeometry(WIDTH, 2, HEIGHT, 400, 1, 400 * HEIGHT / WIDTH);
     var mesh = new THREE.Mesh(geometry);
-    var texture = new THREE.TextureLoader().load( "../textures/cloth-red.png" );
+    var texture = new THREE.TextureLoader().load("../textures/cloth-red.png");
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
-    texture.repeat.set( 10, 10*HEIGHT/WIDTH );
+    texture.repeat.set(10, 10 * HEIGHT / WIDTH);
 
     mesh.userData = {
         materials: [new THREE.MeshBasicMaterial({
@@ -803,11 +817,28 @@ function onKeyUp(e) {
             disablecandels = !disablecandels;
             updatelights = true;
             break;
+        case 72: //h key
+            disableheadlights = !disableheadlights;
+            updatelights = true;
+            break;
+        case 83: //s key
+            paused= !paused;
+            break;
     }
 }
 
 
 function animate() {
+    "use strict";
+
+    if (!paused) {
+        update()
+    }
+    render();
+    requestAnimationFrame(animate);
+}
+
+function update() {
     "use strict";
 
     /* Car rotation animation*/
@@ -979,12 +1010,14 @@ function animate() {
             }
         });
 
+        scene.traverse(function (node) {
+            if (node.isSpotLight) {
+                node.visible = !disableheadlights;
+            }
+        });
 
         updatelights = false;
     }
-
-    render();
-    requestAnimationFrame(animate);
 }
 
 class colidable extends THREE.Object3D {
