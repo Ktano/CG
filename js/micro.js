@@ -600,7 +600,7 @@ function addTable(obj, x, y, z) {
             })
         ]
     };
-    for (let index = 0; index < mesh.userData.materials.length; index++) {
+    for (var index = 0; index < mesh.userData.materials.length; index++) {
         mesh.userData.materials[index].map = texture;
 
     }
