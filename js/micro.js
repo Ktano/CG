@@ -36,7 +36,11 @@ NUMBER_ORANGES = 4
 
 function render() {
     "use strict";
-    renderer.render(scene, camera);
+    renderer.clear();
+
+    renderer.render( scene, camera );
+    //renderer.clearDepth();
+    renderer.render(bannerscene,bannercamera);
 }
 
 function createScene() {
@@ -113,6 +117,7 @@ function init() {
         antialias: true
     });
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.autoClear=false;
     document.body.appendChild(renderer.domElement);
 
     scene = new THREE.Scene();
@@ -121,6 +126,7 @@ function init() {
     window.addEventListener("resize", onResize);
     window.addEventListener("keydown", onKeyDown);
     window.addEventListener("keyup", onKeyUp);
+    createBannerScene();
     setup();
     render();
 }
@@ -268,7 +274,12 @@ function animate() {
     "use strict";
 
     if (!paused) {
+        banner.material.opacity=0;
         update()
+    }
+    else{
+        banner.material.map=banner.userData.screens[0];
+        banner.material.opacity=1;
     }
     render();
     requestAnimationFrame(animate);
@@ -453,6 +464,12 @@ function update() {
         });
 
         updatelights = false;
+    }
+
+    if (GameOver){
+        scene.remove(car);
+        banner.material.map=banner.userData.screens[1];
+        banner.material.opacity=1;
     }
 
     /*restart game*/

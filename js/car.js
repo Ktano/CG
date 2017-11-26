@@ -1,4 +1,4 @@
-function createCar(x, y, z) {
+function createCar( x, y, z) {
     "use strict";
 
     car = new colidable();

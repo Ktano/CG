@@ -43,6 +43,8 @@ function handleColision(main, other) {
                 if (lives==0){
                     GameOver=true;
                 }
+                    
+
                 updateCamera = true;
             }
             break;
