@@ -24,7 +24,7 @@ function addTable(obj, x, y, z) {
 
     var geometry = new THREE.CubeGeometry(WIDTH, 2, HEIGHT, 400, 1, 400 * HEIGHT / WIDTH);
     var mesh = new THREE.Mesh(geometry);
-    var texture = new THREE.TextureLoader().load("../textures/cloth-red.png");
+    var texture = new THREE.TextureLoader().load("/CG/textures/cloth-red.png");
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
     texture.repeat.set(10, 10 * HEIGHT / WIDTH);
