@@ -4,8 +4,8 @@ var banner;
 function createBannerScene(){
     "use strict";
         var screens=[];
-        screens.push( new THREE.TextureLoader().load("../textures/Pause.png"));
-        screens.push( new THREE.TextureLoader().load("../textures/Game Over.png"));
+        screens.push( new THREE.TextureLoader().load("/CG/textures/Pause.png"));
+        screens.push( new THREE.TextureLoader().load("/CG/textures/Game Over.png"));
 
         var geometry = new THREE.PlaneGeometry(1920,1080);
         var material = new THREE.MeshBasicMaterial();
